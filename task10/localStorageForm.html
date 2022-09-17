@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        form {
+            background-image: url("C:/Users/KIRAN/Downloads/img_girl.jpg");
+      background-repeat: no-repeat;
+      background-size: cover;
+
+      border: 2px solid orange;
+      padding: 10px;
+      margin: 20px;
+      margin-top: 0px;
+      margin-bottom:auto ;
+      margin-left: 450px;
+      margin-right: 450px;
+    
+        }
+    </style>
+    <h1 style="color: #ffa500; text-align: center;">
+        Book a Call
+    </h1>
+    <h2 style="text-align:center;">
+
+        Book a call and our representative will call you within that selected time.
+    </h2>
+    
+        <form id="form">
+                <hr>
+                <label for="fname">Name:</label><br>
+        <input type="text" name="fname" id="fname" ><br>
+        <label for="emailid">Email:</label><br>
+        <input type="email" name="emailid" id="emailid" ><br>
+        <label for="Phonenum">Phone:</label><br>
+        <input type="tel" namse="Phonenum" id="Phonenum" ><br>
+        <label for="timeforcall">Time for Call:</label ><br>
+        <input type="date" name="timeforcall" id="dateforcall" >
+        <input type="time" name="timeforcall" id="timeforcall" >
+        <br>
+        <br>
+        <input type="submit" value="GET A CALL">
+            </form>
+
+        <script>
+
+            document.getElementById("form").addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                localStorage.setItem("username", document.getElementById("fname").value);
+                localStorage.setItem("mail", document.getElementById("emailid").value);
+                localStorage.setItem("phoneumber", document.getElementById("Phonenum").value);
+                localStorage.setItem("datetocall",document.getElementById("dateforcall").value);
+                localStorage.setItem("timetocall",document.getElementById("timeforcall").value);
+            }, false)
+
+        </script>
+    
+</body>
+
+</html>
