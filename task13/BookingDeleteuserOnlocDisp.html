@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>
+        Appointment Booking App
+    </h2>
+    
+        <form onsubmit='savetolocal(event)'>
+        <label for="fname">Name:</label>
+        <input type="text" name="fname" id="fname" required/>
+        <label for="emailid">Email:</label>
+        <input type="email" name="emailid" id="emailid" required/>
+        <input class='btn' type="submit" value="GET A CALL">
+        <!-- <ul id="listOfusers"></ul>      if u put here u cant delete the repeated user details..... u can delete first repeated user and then keep deleting user but repeated user cant delete details start remove from first repeated  -->
+            </form>
+            <ul id="listOfusers"></ul>
+
+        <script>
+
+
+            function savetolocal(event){
+                event.preventDefault();
+               var name= document.getElementById("fname").value;
+               var email=document.getElementById("emailid").value;
+
+        const details={
+                  name,
+                  email
+
+                    }
+                    showNewUserScreen(details)
+                    localStorage.setItem(details.email,JSON.stringify( details))  //in console or local storage "json stringfy"
+                };
+
+               window.addEventListener("DOMContentLoaded",()=>{
+                const localStorObj=localStorage;
+                const storageKey=Object.keys(localStorObj);
+
+                for(var i=0;i<storageKey.length;i++){
+                    const localkey=storageKey[i];
+                    const userString=localStorObj[localkey];
+                    const userstringfy=JSON.parse(userString);  // without this will show "undefined undefined" ...in display-json.pharse 
+                    showNewUserScreen(userstringfy);
+
+                }
+
+               })
+
+               function showNewUserScreen(detail){
+                const parentNode = document.getElementById('listOfusers');
+                const childHTML = `<li id=${detail.email}> ${detail.name}  ${detail.email}
+                                        <button onclick=deleteUser('${detail.email}')> Delete User </button>
+                                     </li>`
+
+                parentNode.innerHTML = parentNode.innerHTML + childHTML
+            }
+            function deleteUser(emails){
+                console.log(emails)
+                localStorage.removeItem(emails);
+                removeUserFromScreen(emails);
+
+            }
+
+            function removeUserFromScreen(emails){
+                const parentNode = document.getElementById('listOfusers');
+                const childNodeToBeDeleted = document.getElementById(emails);
+
+                parentNode.removeChild(childNodeToBeDeleted)
+            }
+
+
+
+        </script>
+    
+</body>
+
+</html>
