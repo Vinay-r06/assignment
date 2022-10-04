@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        form {
+            background-image: url("C:/Users/KIRAN/Downloads/img_girl.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+
+            border: 2px solid orange;
+            padding: 10px;
+            margin: 20px;
+            margin-top: 0px;
+            margin-bottom: auto;
+            margin-left: 450px;
+            margin-right: 450px;
+
+        }
+    </style>
+    <h1 style="color: #ffa500; text-align: center;">
+        Expense list
+    </h1>
+    <h2 style="text-align:center;">
+
+        Expense tracker
+    </h2>
+
+    <form id="form">
+        <hr>
+        <label for="amount">Choose Expense amount:</label><br>
+        <input type="number" name="amount" id="amount" required><br>
+        <label for="description">Choose description:</label><br>
+        <input type="text" name="description" id="description" required><br>
+        <label for="category">Choose a category:</label><br>
+        <select name="category" id="category">
+        <option value="electricity">electricity</option>
+        <option value="fuel">fuel</option>
+        <option value="waterbill">water bill</option>
+        <option value="rent">rent</option>
+        <option value="food">food</option><br>
+    </select>
+        <br>
+        <br>
+        <input type="submit" value="Add Expense">
+    </form>
+       <ul id='listofuser'></ul>                                  
+    <script>
+
+        document.getElementById("form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const amounts = document.getElementById("amount").value;
+            const descriptions = document.getElementById("description").value;
+            const categorys = document.getElementById("category").value;
+
+
+            const details = {
+                amounts,
+                descriptions,
+                categorys
+
+            }
+            
+            localStorage.setItem(details.categorys,  JSON.stringify(details));   
+            showscreen(details);
+        });
+
+        function showscreen(user){
+            document.getElementById("amount").value='';
+            document.getElementById("description").value='';
+            document.getElementById("category").value='';  
+
+            const parenthtml=document.getElementById('listofuser');
+            const childhtml=`<li id=${user.categorys}> ${user.amounts} - ${user.descriptions} - ${user.categorys}
+                               <button onclick=deleteuser('${user.categorys}')> delete user </button>
+                               <button onclick=edituser('${user.amounts}','${user.descriptions}','${user.categorys}')> edit user </button>
+                               </li>`
+            parenthtml.innerHTML=parenthtml.innerHTML + childhtml;
+        }
+
+function deleteuser(categorys){
+         localStorage.removeItem(categorys);
+           removescreen(categorys);
+}
+
+function removescreen(categorys){
+        const parenthtml = document.getElementById('listofuser');
+        const childDeleted = document.getElementById(categorys);
+    
+        parenthtml.removeChild(childDeleted); 
+    }
+
+    
+    function edituser(amt,descrip,catgery){
+       document.getElementById('amount').value=amt;
+       document.getElementById('description').value=descrip;
+       document.getElementById('category').value=catgery;
+       deleteuser(catgery);
+       
+
+      }
+
+document.addEventListener('DOMContentLoaded', () => {                        
+Object.keys(localStorage).forEach((key) => {
+stringifiedDetailsOfPeople = localStorage.getItem(key)
+detailsOfPeople = JSON.parse(stringifiedDetailsOfPeople)
+showscreen(detailsOfPeople)
+});
+});
+
+
+</script>
+
+</body>
+
+</html>
+
+
