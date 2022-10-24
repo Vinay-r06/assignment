@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>
+        Appointment Booking App
+    </h2>
+    
+        <form onsubmit='savetolocal(event)'>
+        <label for="fname">Name:</label>
+        <input type="text" name="fname" id="fname" required/>
+        <label for="emailid">Email:</label>
+        <input type="email" name="emailid" id="emailid" required/>
+        <input class='btn' type="submit" value="GET A CALL">
+        <!-- <ul id="listOfusers"></ul>      if u put here u cant delete the repeated user details..... u can delete first repeated user and then keep deleting user but repeated user cant delete details start remove from first repeated  -->
+            </form>
+            <ul id="listOfusers"></ul>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js"></script>
+
+        <script>
+
+
+            function savetolocal(event){
+                event.preventDefault();
+               var name= document.getElementById("fname").value;
+               var email=document.getElementById("emailid").value;
+
+        const details={
+                  name,
+                  email
+
+                    }
+
+                   axios.post("https://crudcrud.com/api/e285d05e731a4912a3037ef315006bbc/AppointmentApp",details)     //i will do network call and save it over there.
+                   .then((response)=>{
+                    showNewUserScreen(response.data)
+                    console.log(response)
+                   }) 
+                   .catch((err)=>{
+                    document.body.innerHTML= document.body.innerHTML + "<h4>Something went wrong</h4>"
+                    console.log(err);
+                   })
+
+                  // showNewUserScreen(details)
+                  //  localStorage.setItem(details.email,JSON.stringify( details))  //in console or local storage "json stringfy"
+                };
+
+
+            //     // read from crud using get request when page loaded 
+
+
+                window.addEventListener("DOMContentLoaded",()=>{
+         //  const data =  axios.get("https://crudcrud.com/api/0c5615fd550e4168930ac94a94da229d/AppointmentApp")              // concept of eventloop,=> when promise is pending because of js compile it will not wait
+         axios.get("https://crudcrud.com/api/e285d05e731a4912a3037ef315006bbc/AppointmentApp")  
+                       .then((response)=>{
+                    
+                    console.log(response)
+                 for(var i=0;i<response.data.length;i++){
+                    showNewUserScreen(response.data[i]);               //response.data nothing but object
+                 }
+
+
+                   })
+
+                .catch((err)=>{
+                    document.body.innerHTML= document.body.innerHTML + "<h4>Something went wrong</h4>"
+                    console.log(err);
+
+                   })
+                         //  console.log(data);              // i will get some data which is promise which is returning from promise
+                })
+
+
+
+                //read from local storage when page loaded
+
+            //    window.addEventListener("DOMContentLoaded",()=>{
+            //     const localStorObj=localStorage;
+            //     const storageKey=Object.keys(localStorObj);
+
+            //     for(var i=0;i<storageKey.length;i++){
+            //         const localkey=storageKey[i];
+            //         const userString=localStorObj[localkey];
+            //         const userstringfy=JSON.parse(userString);  // without this will show "undefined undefined" ...in display-json.pharse 
+            //         showNewUserScreen(userstringfy);
+
+            //     }
+
+            //    })
+
+
+
+               function showNewUserScreen(detail){
+                document.getElementById('fname').value='';
+                document.getElementById('emailid').value='';
+
+                //console.log(localStorage.getItem(detail.email));
+                 if(localStorage.getItem(detail.email)!==null){
+                     removeUserFromScreen(detail.email);
+                 }
+                const parentNode = document.getElementById('listOfusers');
+                const childHTML = `<li id=${detail._id}> ${detail.name} ${detail.email}
+                                        <button onclick=deleteUser('${detail._id}')> Delete User </button> 
+                                        <button onclick=editUser('${detail.name}','${detail.email}','${detail._id}')> Edit User </button>
+                                     </li>`
+
+                parentNode.innerHTML = parentNode.innerHTML + childHTML
+            }
+
+            function editUser(name,emails,userId){
+                axios.put(`https://crudcrud.com/api/e285d05e731a4912a3037ef315006bbc/AppointmentApp/${userId}`,details)     //i will do network call and save it over there.
+                   .then((response)=>{
+                    console.log(userId);
+                    document.getElementById('fname').value=name;
+                   document.getElementById('emailid').value=emails;
+                   deleteUser(userId);
+                   }) 
+                   .catch((err)=>{
+                    document.body.innerHTML= document.body.innerHTML + "<h4>Something went wrong</h4>"
+                    console.log(err);
+                   })
+
+
+                // // console.log(emails);
+                // console.log(userId);
+               
+                // document.getElementById('fname').value=name;
+                // document.getElementById('emailid').value=emails;
+                // deleteUser(userId);
+
+            }
+
+
+            function deleteUser(userId){
+            axios.delete(`https://crudcrud.com/api/e285d05e731a4912a3037ef315006bbc/AppointmentApp/${userId}`)
+            .then((response)=>{
+                
+                removeUserFromScreen(userId);
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+
+                //console.log(emails)
+                //localStorage.removeItem(emails);
+
+              //  removeUserFromScreen(userId);
+
+            }
+
+           
+
+            function removeUserFromScreen(userId){
+                const parentNode = document.getElementById('listOfusers');
+                const childNodeToBeDeleted = document.getElementById(userId);
+                   
+                if(childNodeToBeDeleted){
+                parentNode.removeChild(childNodeToBeDeleted) }
+            }
+
+
+
+        </script>
+    
+</body>
+</html>
