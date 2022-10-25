@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        form {
+            background-image: url("C:/Users/KIRAN/Downloads/img_girl.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+
+            border: 2px solid orange;
+            padding: 10px;
+            margin: 20px;
+            margin-top: 0px;
+            margin-bottom: auto;
+            margin-left: 450px;
+            margin-right: 450px;
+
+        }
+    </style>
+    <h1 style="color: #ffa500; text-align: center;">
+        Expense list
+    </h1>
+    <h2 style="text-align:center;">
+
+        Expense tracker
+    </h2>
+
+    <form id="form">
+        <hr>
+        <label for="amount">Choose Expense amount:</label><br>
+        <input type="number" name="amount" id="amount" required><br>
+        <label for="description">Choose description:</label><br>
+        <input type="text" name="description" id="description" required><br>
+        <label for="category">Choose a category:</label><br>
+        <select name="category" id="category">
+        <option value="electricity">electricity</option>
+        <option value="fuel">fuel</option>
+        <option value="waterbill">water bill</option>
+        <option value="rent">rent</option>
+        <option value="food">food</option>
+        <option value="movie">movie</option>
+        <option value="swimming">swimming</option><br>
+    </select>
+        <br>
+        <br>
+        <input type="submit" value="Add Expense">
+    </form>
+       <ul id='listofuser'></ul> 
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js"></script>
+       
+    <script>
+
+        document.getElementById("form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const amounts = document.getElementById("amount").value;
+            const descriptions = document.getElementById("description").value;
+            const categorys = document.getElementById("category").value;
+
+
+            const details = {
+                amounts,
+                descriptions,
+                categorys
+
+            }
+            
+            
+            axios.post("https://crudcrud.com/api/b928da5fa2d4426f9f3603187755909b/ExpensesApp",details)     //i will do network call and save it over there.
+                   .then((response)=>{
+                    showNewUserScreen(response.data)
+                    console.log(response)
+                   }) 
+                   .catch((err)=>{
+                    document.body.innerHTML= document.body.innerHTML + "<h4>Something went wrong</h4>"
+                    console.log(err);
+                   })
+                   
+
+
+           // localStorage.setItem(details.categorys,  JSON.stringify(details));   
+            //showscreen(details);
+        });
+
+        function showNewUserScreen(user){
+            document.getElementById("amount").value='';
+            document.getElementById("description").value='';
+            document.getElementById("category").value='';  
+
+            const parenthtml=document.getElementById('listofuser');
+            const childhtml=`<li id=${user._id}> ${user.amounts}-${user.descriptions}-${user.categorys}
+                               <button onclick=deleteuser('${user._id}')> delete user </button>
+                               <button onclick=edituser('${user.amounts}','${user.descriptions}','${user.categorys}','${user._id}')> edit user </button>
+                               </li>`
+            parenthtml.innerHTML=parenthtml.innerHTML + childhtml;
+        }
+
+function deleteuser(userId){
+
+    axios.delete(`https://crudcrud.com/api/b928da5fa2d4426f9f3603187755909b/ExpensesApp/${userId}`)
+            .then((response)=>{
+                
+                removeUserFromScreen(userId);
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+}
+
+function removeUserFromScreen(userId){
+        const parenthtml = document.getElementById('listofuser');
+        const childDeleted = document.getElementById(userId);
+    
+        parenthtml.removeChild(childDeleted); 
+    }
+
+    
+    function edituser(amt,descrip,catgery,userId){
+        const obj={
+            amt,
+            descrip,
+            catgery,
+
+        }
+       // console.log(userId);
+       
+       axios.put(`https://crudcrud.com/api/b928da5fa2d4426f9f3603187755909b/ExpensesApp/${userId}`,obj)     //i will do network call and save it over there.
+                   .then((response)=>{
+       document.getElementById('amount').value=amt;
+       document.getElementById('description').value=descrip;
+       document.getElementById('category').value=catgery;
+       deleteuser(userId);
+      }) 
+     .catch((err)=>{
+       document.body.innerHTML= document.body.innerHTML + "<h4>Something went wrong</h4>"
+    console.log(err);
+     })
+
+      }
+
+document.addEventListener('DOMContentLoaded', () => {                        
+    axios.get("https://crudcrud.com/api/b928da5fa2d4426f9f3603187755909b/ExpensesApp")  
+                       .then((response)=>{
+                    
+                    console.log(response)
+                 for(var i=0;i<response.data.length;i++){
+                    showNewUserScreen(response.data[i]);               //response.data nothing but object
+                 }
+
+
+                   })
+
+                .catch((err)=>{
+                    document.body.innerHTML= document.body.innerHTML + "<h4>Something went wrong</h4>"
+                    console.log(err);
+
+                   })
+});
+
+
+</script>
+
+</body>
+
+</html>
